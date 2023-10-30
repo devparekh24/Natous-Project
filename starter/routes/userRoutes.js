@@ -16,11 +16,15 @@ router.post('/login', authController.login)
 router.post('/forgotPassword', authController.forgotPassword)
 router.patch('/resetPassword/:token', authController.resetPassword)
 
-router.patch('/updateMyPassword', authController.protectedRoute, authController.updatePassword)
+//auth-protected route -- Middleware
+router.use(authController.protectedRoute)
 
-router.patch('/updateMe', authController.protectedRoute, userController.updateMe)
-router.delete('/deleteMe', authController.protectedRoute, userController.deleteMe)
+router.patch('/updateMyPassword', authController.updatePassword)
+router.get('/me', userController.getMe, userController.getUser)
+router.patch('/updateMe', userController.updateMe)
+router.delete('/deleteMe', userController.deleteMe)
 
+router.use(authController.restrictTo('admin'))
 
 router
     .route('/')
@@ -33,4 +37,4 @@ router
     .patch(userController.updateUser)
     .delete(userController.deleteUser);
 
-module.exports = router
+module.exports = router;

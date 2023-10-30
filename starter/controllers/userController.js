@@ -13,17 +13,10 @@ const filterObj = (obj, ...allowedData) => {
     return newObj
 }
 
-exports.getAllUsers = catchAsyncErr(async (req, res, next) => {
-    const users = await User.find()
-
-    res.status(200).json({
-        status: 'success',
-        results: users.length,
-        data: {
-            users
-        }
-    })
-})
+exports.getMe = (req, res, next) => {
+    req.params.id = req.user.id
+    next()
+}
 
 exports.updateMe = catchAsyncErr(async (req, res, next) => {
 
@@ -56,14 +49,9 @@ exports.deleteMe = catchAsyncErr(async (req, res) => {
     })
 })
 
-exports.getUser = (req, res) => {
-    console.log(req.reqTime)
-    res.status(500).json({
-        status: 'error',
-        time: req.reqTime,
-        message: 'This route isn\'t implemented...'
-    })
-}
+exports.getAllUsers = factory.getAll(User)
+
+exports.getUser = factory.getOne(User)
 
 exports.updateUser = factory.updateOne(User)
 
@@ -71,12 +59,8 @@ exports.deleteUser = factory.deleteOne(User)
 
 exports.createNewUser = catchAsyncErr(async (req, res, next) => {
 
-    const newUser = await User.create(req.body)
-    res.status(201).json({
-        status: "success",
-        data: {
-            user: newUser
-        }
+    res.status(500).json({
+        status: "error",
+        message: "Please Use /signup !"
     })
-    next()
 })

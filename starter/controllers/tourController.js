@@ -1,7 +1,5 @@
 const Tour = require('./../model/tourModel')
 const catchAsyncError = require('./../utils/catchAsyncErr')
-const APIFeatures = require('./../utils/apiFeatures');
-const AppError = require('../utils/appError');
 const factory = require('./handlerFactory')
 
 // static data
@@ -31,44 +29,46 @@ const factory = require('./handlerFactory')
 //     next()
 // }
 
-exports.getAllTours = catchAsyncError(async (req, res, next) => {
+// exports.getAllTours = catchAsyncError(async (req, res, next) => {
 
-    // try {
+//     // try {
 
-    // console.log(req.query)
-    //1st query type
-    // const tours = await Tour.find({
-    //     duration: 5,
-    //     difficulty: 'easy'
-    // })
-    //2nd type query
-    // const tours = await Tour.find().where('duration').gt(5).where('difficulty').equals('medium');
-    // let query = await Tour.find(JSON.parse(queryStr))
+//     // console.log(req.query)
+//     //1st query type
+//     // const tours = await Tour.find({
+//     //     duration: 5,
+//     //     difficulty: 'easy'
+//     // })
+//     //2nd type query
+//     // const tours = await Tour.find().where('duration').gt(5).where('difficulty').equals('medium');
+//     // let query = await Tour.find(JSON.parse(queryStr))
 
-    const features = new APIFeatures(Tour.find(), req.query)
-        .filter()
-        .sort()
-        .limitfields()
-        .paginate();
+//     const features = new APIFeatures(Tour.find(), req.query)
+//         .filter()
+//         .sort()
+//         .limitfields()
+//         .paginate();
 
-    const tours = await features.query.populate('reviews');
+//     const tours = await features.query;
 
-    res.status(200).json({
-        status: 'success',
-        resutls: tours.length,
-        data: {
-            tours
-        }
-    });
-    // }
-    // catch (err) {
-    //     res.status(404).json({
-    //         status: "fail",
-    //         message: err
-    //     })
-    // }
+//     res.status(200).json({
+//         status: 'success',
+//         resutls: tours.length,
+//         data: {
+//             tours
+//         }
+//     });
+//     // }
+//     // catch (err) {
+//     //     res.status(404).json({
+//     //         status: "fail",
+//     //         message: err
+//     //     })
+//     // }
 
-})
+// })
+
+exports.getAllTours = factory.getAll(Tour)
 
 exports.aliasTopTours = (req, res, next) => {
     req.query.limit = '5'
@@ -116,36 +116,38 @@ exports.aliasTopTours = (req, res, next) => {
 
 exports.createNewTour = factory.createOne(Tour)
 
-exports.getTour = catchAsyncError(async (req, res, next) => {
-    // console.log(req.params)
-    // try {
+// exports.getTour = catchAsyncError(async (req, res, next) => {
+//     // console.log(req.params)
+//     // try {
 
-    const tour = await Tour.findById(req.params.id).populate('reviews')
+//     const tour = await Tour.findById(req.params.id).populate('reviews')
 
-    // .populate({
-    //     path: 'guides',
-    //     select: '-__v -passwordChangedAt'
-    // })
-    // Tour.findOne({_id: req.params.id})
+//     // .populate({
+//     //     path: 'guides',
+//     //     select: '-__v -passwordChangedAt'
+//     // })
+//     // Tour.findOne({_id: req.params.id})
 
-    if (!tour) {
-        return next(new AppError('No tour found with that ID', 404))
-    }
+//     if (!tour) {
+//         return next(new AppError('No tour found with that ID', 404))
+//     }
 
-    res.status(200).json({
-        status: 'success',
-        data: {
-            tour
-        }
-    })
-    // }
-    // catch (err) {
-    //     res.status(404).json({
-    //         status: "fail",
-    //         message: err
-    //     })
-    // }
-})
+//     res.status(200).json({
+//         status: 'success',
+//         data: {
+//             tour
+//         }
+//     })
+//     // }
+//     // catch (err) {
+//     //     res.status(404).json({
+//     //         status: "fail",
+//     //         message: err
+//     //     })
+//     // }
+// })
+
+exports.getTour = factory.getOne(Tour, { path: 'reviews' })
 
 // exports.updateTour = catchAsyncError(async (req, res, next) => {
 //     // try {
