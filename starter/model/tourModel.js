@@ -101,16 +101,20 @@ const tourSchema = new mongoose.Schema({
     toObject: { virtuals: true }
 });
 
+// tourSchema.index({ price: 1 })
+tourSchema.index({ price: 1, ratingsAverage: -1 })
+tourSchema.index({ slug: 1 })
+
 //virtual properties
 tourSchema.virtual('durationWeeks').get(function () {
     return this.duration / 7;
 })
 
 //virtual populate
-tourSchema.virtual('reviews',{
+tourSchema.virtual('reviews', {
     ref: 'Review',
     foreignField: 'tour',
-    localField:'_id'
+    localField: '_id'
 })
 
 //document middleware always run before .save() & .create()

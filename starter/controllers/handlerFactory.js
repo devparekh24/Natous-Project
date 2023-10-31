@@ -59,7 +59,7 @@ exports.updateOne = (Model) => catchAsyncErr(async (req, res, next) => {
         new: true,
         runValidators: true
     })
-
+    console.log(doc)
     if (!doc) {
         return next(new AppError('No document found with that ID', 404))
     }
@@ -102,6 +102,7 @@ exports.createOne = (Model) => catchAsyncErr(async (req, res, next) => {
             data: newModel
         }
     })
+    next()
 })
 
 // exports.getTour = catchAsyncError(async (req, res, next) => {
@@ -206,6 +207,7 @@ exports.getAll = (Model) => catchAsyncErr(async (req, res, next) => {
         .limitfields()
         .paginate();
 
+    // const doc = await features.query.explain(); // exp for indexes in DB
     const doc = await features.query;
 
     res.status(200).json({
