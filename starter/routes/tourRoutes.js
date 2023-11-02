@@ -25,6 +25,14 @@ router
     .get(authController.protectedRoute, authController.restrictTo('admin', 'lead-guide', 'guide'), tourController.getMonthlyPlan)
 
 router
+    .route('/tours-within/:distance/center/:latlng/unit/:unit')
+    .get(tourController.getTourWithin)
+
+router
+    .route('/distance/:latlng/unit/:unit')
+    .get(tourController.getDistances)
+
+router
     .route('/')
     .get(tourController.getAllTours)
     .post(authController.protectedRoute, authController.restrictTo('admin', 'lead-guide'), tourController.createNewTour);

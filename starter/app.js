@@ -1,3 +1,4 @@
+const path = require('path')
 const express = require('express')
 const morgan = require('morgan')
 const rateLimit = require('express-rate-limit')
@@ -10,13 +11,25 @@ const errorController = require('./controllers/errorController')
 const tourRouter = require('./routes/tourRoutes')
 const userRouter = require('./routes/userRoutes')
 const reviewRouter = require('./routes/reviewRoutes')
+const viewRouter = require('./routes/viewRoutes')
 
 const app = express()
 
+//template engine pug
+app.set('view engine', 'pug')
+app.set('views', path.join(__dirname, 'views'))
+
 //Global middleware
 
+//serving static file
+// app.use(express.static(`${__dirname}/public`))
+app.use(express.static(path.join(__dirname, 'public')))
+
 //set security http headers
-app.use(helmet())//collection of 14 smaller middleware fn that set http res header.
+app.use(helmet({
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false
+}))//collection of 14 smaller middleware fn that set http res header.
 
 //development logging
 if (process.env.NODE_ENV === 'development') {
@@ -52,9 +65,6 @@ app.use(hpp({
     ]
 }))
 
-//serving static file
-app.use(express.static(`${__dirname}/public`))
-
 //test middleware
 // app.use((req, res, next) => {
 //     console.log('Hello from middleware....')
@@ -71,7 +81,9 @@ app.use(express.static(`${__dirname}/public`))
 // console.log(app.get('env'))
 // app.use(morgan('dev'))
 
+//routes
 
+app.use('/', viewRouter)
 app.use('/api/v1/tours', tourRouter)
 app.use('/api/v1/users', userRouter)
 app.use('/api/v1/reviews', reviewRouter)

@@ -27,8 +27,11 @@ const reviewSchema = new mongoose.Schema({
     },
 }, {
     toJSON: { virtuals: true },
-    toObject: { virtuals: true }
+    toObject: { virtuals: true },
+    // timestamps: true
 })
+
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true })
 
 reviewSchema.pre(/^find/, function (next) {
     // this.populate({
@@ -80,18 +83,18 @@ reviewSchema.post('save', function () {
     this.constructor.calcAvgRatings(this.tour)
 })
 
-// reviewSchema.pre(/^findOneAnd/, async function (next) {
-//     this.r = await this.findOne();
-//     console.log(r)
-//     next()
-// })
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+    this.r = await this.findOne();
+    console.log(r)
+    next()
+})
 
-// reviewSchema.post(/^findOneAnd/, async function () {
+reviewSchema.post(/^findOneAnd/, async function () {
 
-//     // this.singleReview = await this.findOne() -- doesn't work here bcoz this query has already executed.
-//     const result = await this.r.constructor.calcAvgRatings(this.r.tour)
-//     console.log(result)
-// })
+    // this.singleReview = await this.findOne() -- doesn't work here bcoz this query has already executed.
+    const result = await this.r.constructor.calcAvgRatings(this.r.tour)
+    console.log(result)
+})
 
 const Review = mongoose.model('Review', reviewSchema)
 
