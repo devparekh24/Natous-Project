@@ -28,7 +28,7 @@ locatios.forEach(loc => {
         .addTo(map)
 
     //add popup msg
-    new mapboxgl.Popup({ offset: 30 }).setLngLat(loc.coordinates).setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`).addTo(map)
+    new mapboxgl.Popup({ offset: 30, closeButton: false }).setLngLat(loc.coordinates).setHTML(`<p>Day ${loc.day}: ${loc.description}</p>`).addTo(map);
 
     //extends map bounds to include current location
     bound.extend(loc.coordinates);
