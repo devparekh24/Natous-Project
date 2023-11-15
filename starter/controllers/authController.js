@@ -95,7 +95,7 @@ exports.protectedRoute = catchAsyncErr(async (req, res, next) => {
     else if (req.cookies.jwt) {
         token = req.cookies.jwt
     }
-    // console.log(token)
+    console.log(token)
     if (!token) {
         return next(new AppError('You aren\'t logged in!, Please login to get access', 401))
     }
@@ -122,6 +122,7 @@ exports.protectedRoute = catchAsyncErr(async (req, res, next) => {
 //only for render pages
 exports.isLoggedIn = catchAsyncErr(async (req, res, next) => {
 
+    console.log(req.cookies)
     if (req.cookies.jwt) {
         // try {
 

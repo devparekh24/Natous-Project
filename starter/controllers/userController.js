@@ -39,7 +39,7 @@ exports.updateMe = catchAsyncErr(async (req, res, next) => {
     })
 })
 
-exports.deleteMe = catchAsyncErr(async (req, res) => {
+exports.deleteMe = catchAsyncErr(async (req, res, next) => {
 
     await User.findByIdAndUpdate(req.user.id, { active: false })
 

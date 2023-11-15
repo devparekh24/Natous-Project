@@ -70,7 +70,7 @@ app.use(hpp({
 //test middleware
 app.use((req, res, next) => {
     console.log('Hello from middleware....')
-    console.log(req.cookies)
+    console.log('cookies', req.cookies)
     next();
 })
 
