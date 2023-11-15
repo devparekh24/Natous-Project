@@ -244,6 +244,7 @@ exports.getMonthlyPlan = catchAsyncError(async (req, res, next) => {
     const year = req.params.year * 1
     const plan = await Tour.aggregate([
         {
+            //unwind - to deconstructing an array field in a document and create separate output documents for each item in the array.
             $unwind: '$startDates'
             // : { '$year': year } 
         }, {
