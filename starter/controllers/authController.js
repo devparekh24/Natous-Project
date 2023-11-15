@@ -19,9 +19,9 @@ const createSendToken = (user, statusCode, res) => {
 
     if (process.env.NODE_ENV === 'production') cookieOptions.secure = true;
     res.cookie('jwt', token, cookieOptions)
-    
+
     user.password = undefined
-    
+
     res.status(statusCode).json({
         status: 'success',
         token,
@@ -92,6 +92,9 @@ exports.protectedRoute = catchAsyncErr(async (req, res, next) => {
     if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
         token = req.headers.authorization.split(' ')[1]
     }
+    else if (req.cookies.jwt) {
+        token = req.cookies.jwt
+    }
     // console.log(token)
     if (!token) {
         return next(new AppError('You aren\'t logged in!, Please login to get access', 401))
@@ -115,6 +118,46 @@ exports.protectedRoute = catchAsyncErr(async (req, res, next) => {
     req.user = currentUser;
     next() //access granted to the protected route
 })
+
+//only for render pages
+exports.isLoggedIn = catchAsyncErr(async (req, res, next) => {
+
+    if (req.cookies.jwt) {
+        // try {
+
+        //verify the token 
+        const decode = await promisify(jwt.verify)(req.cookies.jwt, process.env.JWT_SECRETKEY)
+
+        //checking the existance of the user
+        const currentUser = await User.findById(decode.id)
+        if (!currentUser) {
+            return next()
+        }
+
+        //check if user changed password after the token(JWT) was issued
+        if (currentUser.changedPasswordAfter(decode.iat)) {
+            return next()
+        }
+
+        //there is a logged in user
+        res.locals.user = currentUser
+        return next() //access granted to the logged in user
+        // } catch (err) {
+        //     return next()
+        // }
+    }
+    next();
+})
+
+// exports.logout = (req, res) => {
+//     res.cookie('jwt', 'logout', {
+//         expires: new Date(Date.now() + 10 * 1000),
+//         httpOnly: true
+//     })
+//     res.status(200).json({
+//         status: 'success'
+//     })
+// }
 
 exports.restrictTo = (...roles) => {
     return (req, res, next) => {
